@@ -54,6 +54,8 @@ resource "aws_security_group" "demo-sg" {
 
 
 resource "aws_instance" "ec2-instance" {
+  
+ for_each = toset(["Jenkins-master", "build-slave", "ansible"])
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   subnet_id = aws_subnet.public_subnet["0"].id
@@ -61,8 +63,10 @@ resource "aws_instance" "ec2-instance" {
   vpc_security_group_ids = [aws_security_group.demo-sg.id]
 
 
- for_each = toset(["Jenkins-master", "build-slave", "ansible"])
-   tags = {
+
+
+    #  # Only apply script to the ansible instance
+    user_data = each.key == "ansible" ? "./install_ansible.sh" : null 
      Name = "${each.key}-${local.name_prefix}"
    }
 }
