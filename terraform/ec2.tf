@@ -67,6 +67,7 @@ resource "aws_instance" "ec2-instance" {
 
     #  # Only apply script to the ansible instance
     user_data = each.key == "ansible" ? "./install_ansible.sh" : null 
+    tags = {
      Name = "${each.key}-${local.name_prefix}"
    }
 }

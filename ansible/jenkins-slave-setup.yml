@@ -1,0 +1,25 @@
+---
+- hosts: jenkins-slave
+  become: true 
+  tasks:
+  - name: update package cache
+    apt:
+      update_cache: yes
+  - name: install java 
+    apt: 
+      name: openjdk-17-jdk
+      state: present
+  - name: Download Maven packages
+    get_url:    
+      url: https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz
+      dest: /tmp/apache-maven-3.9.11-bin.tar.gz
+      
+  - name: Download Maven packages
+    get_url:    
+      url: https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz
+      dest: /tmp/apache-maven-3.9.11-bin.tar.gz
+  - name: Extract a .tar.gz file
+    ansible.builtin.unarchive:
+      src: /tmp/apache-maven-3.9.11-bin.tar.gz  # Path to the archive on the control node or remote if remote_src: yes
+      dest: /opt        # Destination directory on the remote host
+      remote_src: yes                    # Set to yes if the archive is already on the remote host

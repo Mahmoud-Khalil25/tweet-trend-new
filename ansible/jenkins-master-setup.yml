@@ -1,0 +1,41 @@
+---
+- hosts: jenkins-master
+  become: true 
+  tasks: 
+  - name: download jenkins key using curl
+    shell: |
+      curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key -o /tmp/jenkins.key
+      chmod 644 /tmp/jenkins.key
+  - name: add jenkins key to keyring
+    apt_key:
+      file: /tmp/jenkins.key
+      state: present
+
+  - name: add jenkins repository
+    apt_repository:
+      repo: "deb https://pkg.jenkins.io/debian-stable binary/"
+      state: present
+      filename: jenkins
+
+  - name: update package cache
+    apt:
+      update_cache: yes
+  - name: install java 
+    apt: 
+      name: openjdk-17-jdk
+      state: present
+
+  - name: install jenkins 
+    apt: 
+      name: jenkins 
+      state: present 
+
+  - name: start jenkins service 
+    service: 
+      name: jenkins 
+      state: started 
+
+  - name: enable jenkins to start at boot time 
+    service: 
+      name: jenkins 
+      enabled: yes 
